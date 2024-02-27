@@ -1,0 +1,50 @@
+plugins {
+    id "java"
+    id "org.springframework.boot" version "3.2.3"
+    id "io.spring.dependency-management" version "1.1.4"
+    id "org.springdoc.openapi-gradle-plugin" version "1.8.0"
+}
+
+group = "io.ghcr.heliannuuthus"
+java {
+    sourceCompatibility = "17"
+}
+
+ext {
+    springOpenApiVersion = "2.3.0"
+    guavaVersion = "33.0.0-jre"
+    apacheCommonVersion = "3.14.0"
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    maven { url "https://maven.aliyun.com/repository/public" }
+    maven { url "https://maven.aliyun.com/repository/spring/"}
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-data-r2dbc"
+    implementation "org.springframework.boot:spring-boot-starter-webflux"
+
+    implementation "org.springdoc:springdoc-openapi-starter-webflux-ui:${springOpenApiVersion}"
+    implementation "com.google.guava:guava:${guavaVersion}"
+    implementation "org.apache.commons:commons-lang3:${apacheCommonVersion}"
+
+    compileOnly "org.projectlombok:lombok"
+    developmentOnly "org.springframework.boot:spring-boot-devtools"
+    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    annotationProcessor "org.projectlombok:lombok"
+
+    testImplementation "org.springframework.boot:spring-boot-starter-test"
+    testImplementation "io.projectreactor:reactor-test"
+}
+
+tasks.named("test") {
+    useJUnitPlatform()
+}
