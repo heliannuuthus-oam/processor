@@ -6,12 +6,11 @@ import org.apache.commons.rng.simple.RandomSource;
 
 @UtilityClass
 public class CryptoUtils {
-    private static final UniformRandomProvider UNIFORM_RANDOM_PROVIDER = RandomSource.MT_64.create();
+  private static final UniformRandomProvider UNIFORM_RANDOM_PROVIDER = RandomSource.MT_64.create();
 
-    public static byte[] nextBytes(int len) {
-        byte[] iv = new byte[len];
-        UNIFORM_RANDOM_PROVIDER.nextBytes(iv);
-        return iv;
-    }
-
+  public static byte[] nextBytes(int len) {
+    byte[] iv = new byte[len];
+    UNIFORM_RANDOM_PROVIDER.nextBytes(iv);
+    return iv;
+  }
 }
