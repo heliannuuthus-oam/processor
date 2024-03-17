@@ -40,13 +40,13 @@ class BlockCipherTest {
     Security.addProvider(new BouncyCastleProvider());
   }
 
-  static Stream<Arguments> buildAESCipherParameters() {
+  static Stream<Arguments> aesGenerator() {
     return Stream.of(CBC_MODE, GCM_MODE, ECB_MODE)
         .flatMap(mode -> Stream.of(128, 192, 256).map(size -> Arguments.of(mode, size)));
   }
 
   @ParameterizedTest
-  @MethodSource("buildAESCipherParameters")
+  @MethodSource("aesGenerator")
   @DisplayName("test AES encryption")
   void testAESEncryption(String mode, int size) throws NoSuchAlgorithmException {
     byte[] plaintext = "plaintext".getBytes();

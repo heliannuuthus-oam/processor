@@ -1,5 +1,6 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters;
 
+import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -11,6 +12,8 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 @Getter
 public abstract class AsymmetricParameters implements OamParameters {
+
+  private MessageDigest messageDigest = MessageDigest.SHA_256;
 
   protected AsymmetricParameters() {}
 
@@ -44,4 +47,18 @@ public abstract class AsymmetricParameters implements OamParameters {
   private PublicKey publicKey;
 
   public abstract String getName();
+
+  public String getMessageDigest() {
+    return messageDigest.getName();
+  }
+
+  public AsymmetricParameters md(MessageDigest messageDigest) {
+    this.messageDigest = messageDigest;
+    return this;
+  }
+
+  @Override
+  public String getAlgorithm() {
+    return getMessageDigest() + "with" + getName();
+  }
 }
