@@ -2,26 +2,45 @@ package io.ghcr.heliannuuthus.devtools.crypto.parameters;
 
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.OamAlgorithm;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
-import java.security.spec.AlgorithmParameterSpec;
-import javax.crypto.SecretKey;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.crypto.SecretKey;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.spec.AlgorithmParameterSpec;
+
+@Setter
+@Getter
 public abstract class BlockParameters implements OamAlgorithm {
 
-  @Override
-  public String getAlgorithm() {
-    return StringUtils.joinWith("/", getName(), getMode(), getPadding().getName());
-  }
+    public static final String ECB_MODE = "ECB";
+    public static final String CBC_MODE = "CBC";
+    public static final String GCM_MODE = "GCM";
 
-  public abstract String getName();
+    protected byte[] key;
 
-  public abstract String getMode();
+    @Override
+    public String getAlgorithm() {
+        return StringUtils.joinWith("/", getName(), getMode(), getPadding().getName());
+    }
 
-  public Padding getPadding() {
-    return Padding.PKCS7;
-  }
+    public String getName() {
+        return null;
+    }
 
-  public abstract SecretKey getKey();
+    public abstract String getMode();
 
-  public abstract AlgorithmParameterSpec getSpec();
+
+    public Padding getPadding() {
+        return Padding.PKCS7;
+    }
+
+    public SecretKey getKey() {
+        return new SecretKeySpec(this.key, getName());
+    }
+
+    public AlgorithmParameterSpec getSpec() {
+        return null;
+    }
 }
