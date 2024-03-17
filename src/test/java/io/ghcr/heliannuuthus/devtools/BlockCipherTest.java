@@ -1,7 +1,7 @@
 package io.ghcr.heliannuuthus.devtools;
 
-import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.OamAlgorithm.AES_ALGORITHM;
 import static io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters.ECB_MODE;
+import static io.ghcr.heliannuuthus.devtools.crypto.parameters.OamParameters.AES_ALGORITHM;
 import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters.CBC_MODE;
 import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters.GCM_MODE;
 import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;

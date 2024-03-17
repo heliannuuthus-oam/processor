@@ -26,4 +26,9 @@ public class Ed25519Parameters extends AsymmetricParameters {
   public AlgorithmParameterSpec getSpec() {
     return new EdDSAParameterSpec(getName());
   }
+
+  @Override
+  public String getAlgorithm() {
+    return ED_DSA_ALGORITHM;
+  }
 }

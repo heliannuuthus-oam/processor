@@ -1,6 +1,5 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters;
 
-import io.ghcr.heliannuuthus.devtools.crypto.algorithms.OamAlgorithm;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
 import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.SecretKey;
@@ -11,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 @Setter
 @Getter
-public abstract class BlockParameters implements OamAlgorithm {
+public abstract class BlockParameters implements OamParameters {
 
   public static final String ECB_MODE = "ECB";
   public static final String CBC_MODE = "CBC";

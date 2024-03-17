@@ -1,6 +1,5 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters;
 
-import io.ghcr.heliannuuthus.devtools.crypto.algorithms.OamAlgorithm;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
@@ -11,7 +10,7 @@ import lombok.Getter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 @Getter
-public abstract class AsymmetricParameters implements OamAlgorithm {
+public abstract class AsymmetricParameters implements OamParameters {
 
   protected AsymmetricParameters() {}
 
@@ -39,11 +38,6 @@ public abstract class AsymmetricParameters implements OamAlgorithm {
     } catch (Exception e) {
       throw new CryptoException(-1, getName(), e);
     }
-  }
-
-  @Override
-  public String getAlgorithm() {
-    return ED_DSA_ALGORITHM;
   }
 
   private PrivateKey privateKey;
