@@ -9,6 +9,7 @@ import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed25519Parameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm2.SM2Parameters;
 import java.security.*;
 import java.util.stream.Stream;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
@@ -57,7 +58,7 @@ class SignatureTest {
 
   @ParameterizedTest
   @MethodSource("ecdsaGenerator")
-  @DisplayName("test EdDSA")
+  @DisplayName("test ECDSA")
   void testECDSA(String curveName, MessageDigest md)
       throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
     KeyPairGenerator keyPairGenerator =
@@ -71,6 +72,29 @@ class SignatureTest {
         this.signature.sign(plaintext, new ECParameters(privateKey, publicKey).md(md));
     Assertions.assertTrue(
         this.signature.verify(plaintext, signature, new ECParameters(publicKey, false).md(md)));
+  }
+
+  static Stream<Arguments> smGenerator() {
+    return Stream.of("sm2p256v1")
+        .flatMap(curveName -> Stream.of(SM3, SHA_256).map(md -> Arguments.of(curveName, md)));
+  }
+
+  @ParameterizedTest
+  @MethodSource("smGenerator")
+  @DisplayName("test SM")
+  void testSM(String curveName, MessageDigest md)
+      throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+    KeyPairGenerator keyPairGenerator =
+        KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
+    keyPairGenerator.initialize(ECNamedCurveTable.getParameterSpec(curveName));
+    KeyPair keyPair = keyPairGenerator.generateKeyPair();
+    byte[] privateKey = keyPair.getPrivate().getEncoded();
+    byte[] publicKey = keyPair.getPublic().getEncoded();
+    byte[] plaintext = "plaintext".getBytes();
+    byte[] signature =
+        this.signature.sign(plaintext, new SM2Parameters(privateKey, publicKey).md(md));
+    Assertions.assertTrue(
+        this.signature.verify(plaintext, signature, new SM2Parameters(publicKey, false).md(md)));
   }
 
   static Stream<Arguments> rsaGenerator() {

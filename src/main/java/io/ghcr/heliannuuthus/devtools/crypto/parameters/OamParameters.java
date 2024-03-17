@@ -7,6 +7,7 @@ public interface OamParameters {
   String RSA_ALGORITHM = "RSA";
   String ED_DSA_ALGORITHM = "EdDSA";
   String ECDSA_ALGORITHM = "ECDSA";
+  String SM2_ALGORITHM = "SM2";
 
   String getAlgorithm();
 }
