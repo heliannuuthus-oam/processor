@@ -8,8 +8,7 @@ plugins {
     id "io.freefair.lombok" version "8.6"
 }
 
-
-apply from: "./cloud.gradle"
+apply from: "https://raw.gitmirror.com/heliannuuthus/integrate-deploy/master/gradle/cloud.gradle"
 
 ext {
     bcVersion = "1.77"
@@ -17,7 +16,7 @@ ext {
 
 repositories {
     maven { url "https://maven.aliyun.com/repository/public" }
-    maven { url "https://maven.aliyun.com/repository/spring/"}
+    maven { url "https://maven.aliyun.com/repository/spring/" }
     mavenCentral()
 }
 
@@ -27,7 +26,6 @@ dependencies {
 
     implementation "org.bouncycastle:bcprov-jdk18on:${bcVersion}"
     implementation "org.bouncycastle:bcpkix-jdk18on:${bcVersion}"
-
     compileOnly "org.projectlombok:lombok"
     developmentOnly "org.springframework.boot:spring-boot-devtools"
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
