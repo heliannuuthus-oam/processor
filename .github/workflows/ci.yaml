@@ -1,0 +1,28 @@
+name: ci
+
+on:
+  pull_request:
+    types: [ opened, reopened, synchronize ]
+  pull_request_target:
+    types: [ closed ]
+
+jobs:
+  lint:
+    if: ${{ github.event.pull_request.merged != true }}
+    uses: heliannuuthus/integrate-deploy/.github/workflows/call-gradle-lint.yml@master
+
+  build:
+    if: always()
+    needs: lint
+    uses: heliannuuthus/integrate-deploy/.github/workflows/call-gradle-build.yml@master
+
+  containerize:
+    if: ${{ always() && github.event.pull_request.merged == true }}
+    needs: build
+    permissions:
+      contents: read
+      packages: write
+    uses: heliannuuthus/integrate-deploy/.github/workflows/call-containerize.yml@master
+    with:
+      version: ${{ needs.build.outputs.version }}
+      target: "./build"
