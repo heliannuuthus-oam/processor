@@ -6,6 +6,7 @@ import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParamet
 import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters.GCM_MODE;
 import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;
 
+import io.ghcr.heliannuuthus.devtools.crypto.BlockCipher;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESECBParameters;
@@ -13,7 +14,6 @@ import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESGCMParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4CBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4ECBParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4GCMParameters;
-import io.ghcr.heliannuuthus.devtools.crypto.symmetric.BlockCipher;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.stream.Stream;

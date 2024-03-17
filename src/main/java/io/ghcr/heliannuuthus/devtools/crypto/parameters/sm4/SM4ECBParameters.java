@@ -3,11 +3,11 @@ package io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4;
 import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding.PKCS7;
 
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.ECBParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
 import lombok.Getter;
 
 @Getter
-public class SM4ECBParameters extends ECBParameters {
+public class SM4ECBParameters extends BlockParameters {
 
   public SM4ECBParameters(byte[] key) {
     this(key, PKCS7);
@@ -23,6 +23,10 @@ public class SM4ECBParameters extends ECBParameters {
   @Override
   public String getName() {
     return SM4_ALGORITHM;
+  }
+
+  public String getMode() {
+    return ECB_MODE;
   }
 
   @Override

@@ -3,11 +3,11 @@ package io.ghcr.heliannuuthus.devtools.crypto.parameters.aes;
 import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding.PKCS7;
 
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.ECBParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
 import lombok.Getter;
 
 @Getter
-public class AESECBParameters extends ECBParameters {
+public class AESECBParameters extends BlockParameters {
 
   public AESECBParameters(byte[] key) {
     this(key, PKCS7);
@@ -23,6 +23,10 @@ public class AESECBParameters extends ECBParameters {
   @Override
   public String getName() {
     return AES_ALGORITHM;
+  }
+
+  public String getMode() {
+    return ECB_MODE;
   }
 
   @Override
