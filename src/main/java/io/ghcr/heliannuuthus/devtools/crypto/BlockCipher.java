@@ -1,4 +1,4 @@
-package io.ghcr.heliannuuthus.devtools.crypto.symmetric;
+package io.ghcr.heliannuuthus.devtools.crypto;
 
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
