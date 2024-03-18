@@ -28,7 +28,7 @@ public abstract class AsymmetricParameters implements OamParameters {
         this.publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(key));
       }
     } catch (Exception e) {
-      throw new CryptoException(-1, getName(), e);
+      throw new CryptoException(CryptoException.INIT_MODE, getName(), e);
     }
   }
 
@@ -39,7 +39,7 @@ public abstract class AsymmetricParameters implements OamParameters {
       this.privateKey = keyFactory.generatePrivate(new PKCS8EncodedKeySpec(privateKey));
       this.publicKey = keyFactory.generatePublic(new X509EncodedKeySpec(publicKey));
     } catch (Exception e) {
-      throw new CryptoException(-1, getName(), e);
+      throw new CryptoException(CryptoException.INIT_MODE, getName(), e);
     }
   }
 
