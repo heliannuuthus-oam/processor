@@ -1,8 +1,6 @@
 package io.ghcr.heliannuuthus.devtools;
 
 import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest.*;
-import static io.ghcr.heliannuuthus.devtools.crypto.parameters.OamParameters.ECDSA_ALGORITHM;
-import static io.ghcr.heliannuuthus.devtools.crypto.parameters.OamParameters.RSA_ALGORITHM;
 
 import io.ghcr.heliannuuthus.devtools.crypto.Signature;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
@@ -10,10 +8,16 @@ import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed25519Parameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm2.SM2Parameters;
-import java.security.*;
+import io.ghcr.heliannuuthus.devtools.provider.AsymmetricKeyProvider;
+import io.ghcr.heliannuuthus.devtools.provider.parameters.ECKeyGenParameters;
+import io.ghcr.heliannuuthus.devtools.provider.parameters.EdDSAKeyGenParameters;
+import io.ghcr.heliannuuthus.devtools.provider.parameters.RSAKeyGenParameters;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
+import java.security.Security;
 import java.util.stream.Stream;
-import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
-import org.bouncycastle.jce.ECNamedCurveTable;
+import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -28,6 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class SignatureTest {
   private final Signature signature = new Signature();
+  private final AsymmetricKeyProvider provider = new AsymmetricKeyProvider();
 
   @BeforeAll
   static void init() {
@@ -36,17 +41,13 @@ class SignatureTest {
 
   @Test
   @DisplayName("test EdDSA ed25519")
-  void testEdDSA() throws NoSuchAlgorithmException, NoSuchProviderException {
-    KeyPairGenerator keyPairGenerator =
-        KeyPairGenerator.getInstance(
-            EdDSAParameterSpec.Ed25519, BouncyCastleProvider.PROVIDER_NAME);
-    KeyPair keyPair = keyPairGenerator.generateKeyPair();
-    byte[] privateKey = keyPair.getPrivate().getEncoded();
-    byte[] publicKey = keyPair.getPublic().getEncoded();
+  void testEdDSA() {
+    Pair<byte[], byte[]> keys = provider.generate(new EdDSAKeyGenParameters());
     byte[] plaintext = "plaintext".getBytes();
-    byte[] signature = this.signature.sign(plaintext, new Ed25519Parameters(privateKey, publicKey));
+    byte[] signature =
+        this.signature.sign(plaintext, new Ed25519Parameters(keys.getKey(), keys.getValue()));
     Assertions.assertTrue(
-        this.signature.verify(plaintext, signature, new Ed25519Parameters(publicKey, false)));
+        this.signature.verify(plaintext, signature, new Ed25519Parameters(keys.getValue(), false)));
   }
 
   static Stream<Arguments> ecdsaGenerator() {
@@ -59,19 +60,14 @@ class SignatureTest {
   @ParameterizedTest
   @MethodSource("ecdsaGenerator")
   @DisplayName("test ECDSA")
-  void testECDSA(String curveName, MessageDigest md)
-      throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-    KeyPairGenerator keyPairGenerator =
-        KeyPairGenerator.getInstance(ECDSA_ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
-    keyPairGenerator.initialize(ECNamedCurveTable.getParameterSpec(curveName));
-    KeyPair keyPair = keyPairGenerator.generateKeyPair();
-    byte[] privateKey = keyPair.getPrivate().getEncoded();
-    byte[] publicKey = keyPair.getPublic().getEncoded();
+  void testECDSA(String curveName, MessageDigest md) {
+    Pair<byte[], byte[]> keys = provider.generate(new ECKeyGenParameters(curveName));
     byte[] plaintext = "plaintext".getBytes();
     byte[] signature =
-        this.signature.sign(plaintext, new ECParameters(privateKey, publicKey).md(md));
+        this.signature.sign(plaintext, new ECParameters(keys.getKey(), keys.getValue()).md(md));
     Assertions.assertTrue(
-        this.signature.verify(plaintext, signature, new ECParameters(publicKey, false).md(md)));
+        this.signature.verify(
+            plaintext, signature, new ECParameters(keys.getValue(), false).md(md)));
   }
 
   static Stream<Arguments> smGenerator() {
@@ -84,17 +80,13 @@ class SignatureTest {
   @DisplayName("test SM")
   void testSM(String curveName, MessageDigest md)
       throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
-    KeyPairGenerator keyPairGenerator =
-        KeyPairGenerator.getInstance("EC", BouncyCastleProvider.PROVIDER_NAME);
-    keyPairGenerator.initialize(ECNamedCurveTable.getParameterSpec(curveName));
-    KeyPair keyPair = keyPairGenerator.generateKeyPair();
-    byte[] privateKey = keyPair.getPrivate().getEncoded();
-    byte[] publicKey = keyPair.getPublic().getEncoded();
+    Pair<byte[], byte[]> keys = provider.generate(new ECKeyGenParameters(curveName));
     byte[] plaintext = "plaintext".getBytes();
     byte[] signature =
-        this.signature.sign(plaintext, new SM2Parameters(privateKey, publicKey).md(md));
+        this.signature.sign(plaintext, new SM2Parameters(keys.getKey(), keys.getValue()).md(md));
     Assertions.assertTrue(
-        this.signature.verify(plaintext, signature, new SM2Parameters(publicKey, false).md(md)));
+        this.signature.verify(
+            plaintext, signature, new SM2Parameters(keys.getValue(), false).md(md)));
   }
 
   static Stream<Arguments> rsaGenerator() {
@@ -109,16 +101,13 @@ class SignatureTest {
   @DisplayName("test RSA")
   void testECDSA(int size, MessageDigest md)
       throws NoSuchAlgorithmException, NoSuchProviderException {
-    KeyPairGenerator keyPairGenerator =
-        KeyPairGenerator.getInstance(RSA_ALGORITHM, BouncyCastleProvider.PROVIDER_NAME);
-    keyPairGenerator.initialize(size);
-    KeyPair keyPair = keyPairGenerator.generateKeyPair();
-    byte[] privateKey = keyPair.getPrivate().getEncoded();
-    byte[] publicKey = keyPair.getPublic().getEncoded();
+    Pair<byte[], byte[]> keys = provider.generate(new RSAKeyGenParameters(size));
+
     byte[] plaintext = "plaintext".getBytes();
     byte[] signature =
-        this.signature.sign(plaintext, new RSAParameters(privateKey, publicKey).md(md));
+        this.signature.sign(plaintext, new RSAParameters(keys.getKey(), keys.getValue()).md(md));
     Assertions.assertTrue(
-        this.signature.verify(plaintext, signature, new RSAParameters(publicKey, false).md(md)));
+        this.signature.verify(
+            plaintext, signature, new RSAParameters(keys.getValue(), false).md(md)));
   }
 }
