@@ -6,8 +6,12 @@ import java.security.KeyPairGenerator;
 import java.util.Objects;
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.stereotype.Component;
 
+@Component()
 public class AsymmetricKeyProvider {
+
+  public static final String ASYMMETRIC = "asymmetric";
 
   public Pair<byte[], byte[]> generate(KeyGenParameters parameters) {
     try {

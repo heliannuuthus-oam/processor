@@ -3,8 +3,12 @@ package io.ghcr.heliannuuthus.devtools.provider;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
 import javax.crypto.KeyGenerator;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.stereotype.Component;
 
+@Component()
 public class SymmetricKeyProvider {
+
+  public static final String SYMMETRIC = "symmetric";
 
   public byte[] generate(KeyGenParameters parameters) {
     try {
