@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: helianthus-annuus-devtools
+  jackson:
+    default-property-inclusion: non_null
+    property-naming-strategy: SNAKE_CASE
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      discovery:
+        enabled: false
+server:
+  port: 11130
+
+apollo:
+  bootstrap:
+    namespaces: application

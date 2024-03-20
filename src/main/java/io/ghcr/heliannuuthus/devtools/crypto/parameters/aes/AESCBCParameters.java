@@ -1,7 +1,7 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters.aes;
 
 import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding.PKCS7;
-import static org.apache.commons.lang3.RandomUtils.nextBytes;
+import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;
 
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
 import java.security.spec.AlgorithmParameterSpec;
