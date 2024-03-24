@@ -59,6 +59,6 @@ public abstract class AsymmetricParameters implements OamParameters {
 
   @Override
   public String getAlgorithm() {
-    return getMessageDigest() + "with" + getName();
+    return getMessageDigest() + CONNECTOR + getName();
   }
 }

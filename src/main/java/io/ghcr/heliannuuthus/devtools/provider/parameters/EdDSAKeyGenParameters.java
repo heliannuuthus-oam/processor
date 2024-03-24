@@ -17,6 +17,6 @@ public class EdDSAKeyGenParameters implements KeyGenParameters {
 
   @Override
   public String getName() {
-    return name;
+    return this.name;
   }
 }

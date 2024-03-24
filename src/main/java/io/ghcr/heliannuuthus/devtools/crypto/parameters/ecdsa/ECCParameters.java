@@ -2,17 +2,17 @@ package io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa;
 
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
 
-public class ECParameters extends AsymmetricParameters {
+public class ECCParameters extends AsymmetricParameters {
 
-  protected ECParameters() {
+  protected ECCParameters() {
     super();
   }
 
-  public ECParameters(byte[] key, boolean isPrivate) {
+  public ECCParameters(byte[] key, boolean isPrivate) {
     super(key, isPrivate);
   }
 
-  public ECParameters(byte[] privateKey, byte[] publicKey) {
+  public ECCParameters(byte[] privateKey, byte[] publicKey) {
     super(privateKey, publicKey);
   }
 

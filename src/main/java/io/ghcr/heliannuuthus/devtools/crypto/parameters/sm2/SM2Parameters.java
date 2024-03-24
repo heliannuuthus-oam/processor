@@ -22,6 +22,6 @@ public class SM2Parameters extends AsymmetricParameters {
 
   @Override
   public String getAlgorithm() {
-    return getMessageDigest() + "WITH" + SM2_ALGORITHM;
+    return getMessageDigest() + CONNECTOR + SM2_ALGORITHM;
   }
 }

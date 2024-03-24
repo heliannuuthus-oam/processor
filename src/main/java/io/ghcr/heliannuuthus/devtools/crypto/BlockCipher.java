@@ -7,7 +7,9 @@ import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
 import javax.crypto.Cipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.stereotype.Component;
 
+@Component
 public class BlockCipher {
   public byte[] encrypt(byte[] plaintext, BlockParameters parameters) {
     try {

@@ -12,5 +12,5 @@ public enum MessageDigest {
   SHA_384("SHA384"),
   SHA_512("SHA512");
 
-  private String name;
+  private final String name;
 }

@@ -4,20 +4,21 @@ import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest.*;
 
 import io.ghcr.heliannuuthus.devtools.crypto.Signature;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed25519Parameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed448Parameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm2.SM2Parameters;
 import io.ghcr.heliannuuthus.devtools.provider.AsymmetricKeyProvider;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.ECKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.EdDSAKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.RSAKeyGenParameters;
-import java.security.InvalidAlgorithmParameterException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.Security;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
+import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -40,8 +41,20 @@ class SignatureTest {
   }
 
   @Test
+  @DisplayName("test EdDSA ed448")
+  void testEdDSAEd448() {
+    Pair<byte[], byte[]> keys =
+        provider.generate(new EdDSAKeyGenParameters(EdDSAParameterSpec.Ed448));
+    byte[] plaintext = "plaintext".getBytes();
+    byte[] signature =
+        this.signature.sign(plaintext, new Ed448Parameters(keys.getKey(), keys.getValue()));
+    Assertions.assertTrue(
+        this.signature.verify(plaintext, signature, new Ed448Parameters(keys.getValue(), false)));
+  }
+
+  @Test
   @DisplayName("test EdDSA ed25519")
-  void testEdDSA() {
+  void testEdDSAEd25519() {
     Pair<byte[], byte[]> keys = provider.generate(new EdDSAKeyGenParameters());
     byte[] plaintext = "plaintext".getBytes();
     byte[] signature =
@@ -64,10 +77,10 @@ class SignatureTest {
     Pair<byte[], byte[]> keys = provider.generate(new ECKeyGenParameters(curveName));
     byte[] plaintext = "plaintext".getBytes();
     byte[] signature =
-        this.signature.sign(plaintext, new ECParameters(keys.getKey(), keys.getValue()).md(md));
+        this.signature.sign(plaintext, new ECCParameters(keys.getKey(), keys.getValue()).md(md));
     Assertions.assertTrue(
         this.signature.verify(
-            plaintext, signature, new ECParameters(keys.getValue(), false).md(md)));
+            plaintext, signature, new ECCParameters(keys.getValue(), false).md(md)));
   }
 
   static Stream<Arguments> smGenerator() {
@@ -78,8 +91,7 @@ class SignatureTest {
   @ParameterizedTest
   @MethodSource("smGenerator")
   @DisplayName("test SM")
-  void testSM(String curveName, MessageDigest md)
-      throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException {
+  void testSM(String curveName, MessageDigest md) {
     Pair<byte[], byte[]> keys = provider.generate(new ECKeyGenParameters(curveName));
     byte[] plaintext = "plaintext".getBytes();
     byte[] signature =

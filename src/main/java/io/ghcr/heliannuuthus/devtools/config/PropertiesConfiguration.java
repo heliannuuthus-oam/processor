@@ -1,7 +1,7 @@
 package io.ghcr.heliannuuthus.devtools.config;
 
-import io.ghcr.heliannuuthus.devtools.properties.KeyProperties;
+import io.ghcr.heliannuuthus.devtools.properties.CryptoProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
-@EnableConfigurationProperties(KeyProperties.class)
+@EnableConfigurationProperties(CryptoProperties.class)
 public class PropertiesConfiguration {}
