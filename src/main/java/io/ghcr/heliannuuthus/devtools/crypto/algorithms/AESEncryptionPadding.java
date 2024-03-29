@@ -5,9 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum Padding {
+public enum AESEncryptionPadding {
   PKCS7("PKCS7Padding"),
   PKCS5("PKCS5Padding"),
   None("NoPadding");
-  private final String name;
+  private final String value;
 }

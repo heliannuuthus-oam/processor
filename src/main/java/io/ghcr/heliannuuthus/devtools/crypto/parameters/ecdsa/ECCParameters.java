@@ -1,8 +1,8 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa;
 
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 
-public class ECCParameters extends AsymmetricParameters {
+public class ECCParameters extends SignParameters {
 
   protected ECCParameters() {
     super();

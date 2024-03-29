@@ -1,12 +1,12 @@
 package io.ghcr.heliannuuthus.devtools;
 
-import static io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters.ECB_MODE;
+import static io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters.ECB_MODE;
 import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters.CBC_MODE;
 import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters.GCM_MODE;
 import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;
 
-import io.ghcr.heliannuuthus.devtools.crypto.BlockCipher;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.Encryptor;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESECBParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESGCMParameters;
@@ -33,7 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class BlockCipherTest {
 
-  private static final BlockCipher blockCipher = new BlockCipher();
+  private static final Encryptor blockCipher = new Encryptor();
   private static final SymmetricKeyProvider symmetricKeyProvider = new SymmetricKeyProvider();
 
   @BeforeAll
@@ -52,7 +52,7 @@ class BlockCipherTest {
   void testAESEncryption(String mode, int size) throws NoSuchAlgorithmException {
     byte[] plaintext = "plaintext".getBytes();
     byte[] key = symmetricKeyProvider.generate(new AESKeyGenParameters(128));
-    BlockParameters blockParameters;
+    EncryptionParameters blockParameters;
     switch (mode) {
       case ECB_MODE -> {
         blockParameters = new AESECBParameters(key);
@@ -75,7 +75,7 @@ class BlockCipherTest {
   void testSM4Encryption(String mode) {
     byte[] plaintext = "plaintext".getBytes();
     byte[] key = symmetricKeyProvider.generate(new SM4KeyGenParameters());
-    BlockParameters blockParameters;
+    EncryptionParameters blockParameters;
     switch (mode) {
       case ECB_MODE -> {
         blockParameters = new SM4ECBParameters(key);

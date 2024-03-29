@@ -4,11 +4,13 @@ import static io.ghcr.heliannuuthus.devtools.crypto.parameters.OamParameters.*;
 
 import com.google.common.collect.Sets;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECCParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECIESParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed25519Parameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed448Parameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAStreamParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm2.SM2Parameters;
 import io.ghcr.heliannuuthus.devtools.exception.BadRequestException;
 import java.util.Set;
@@ -19,11 +21,6 @@ import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 public class ParametersFactory {
 
   private static final ParametersFactory INSTANCE = new ParametersFactory();
-
-  public static ParametersFactory getInstance() {
-    return INSTANCE;
-  }
-
   private static final Set<String> RSA =
       Stream.of(MessageDigest.values())
           .map(md -> md + CONNECTOR + RSA_ALGORITHM)
@@ -39,7 +36,11 @@ public class ParametersFactory {
           .map(md -> md + CONNECTOR + SM2_ALGORITHM)
           .collect(Collectors.toSet());
 
-  public AsymmetricParameters create(String algorithm, byte[] key, boolean forSign) {
+  public static ParametersFactory getInstance() {
+    return INSTANCE;
+  }
+
+  public SignParameters createForSign(String algorithm, byte[] key, boolean forSign) {
     if (RSA.contains(algorithm)) {
       return new RSAParameters(key, forSign);
     } else if (ECC.contains(algorithm)) {
@@ -54,6 +55,15 @@ public class ParametersFactory {
     } else if (GM.contains(algorithm)) {
       return new SM2Parameters(key, forSign);
     }
-    throw new BadRequestException("unsupported algorithm " + algorithm);
+    throw new BadRequestException("unsupported stream sign algorithm " + algorithm);
+  }
+
+  public SignParameters createForEncrypt(String algorithm, byte[] key, boolean forEncrypt) {
+    if (RSA.contains(algorithm)) {
+      return new RSAStreamParameters(key, !forEncrypt);
+    } else if (ECC.contains(algorithm)) {
+      return new ECIESParameters(key, !forEncrypt);
+    }
+    throw new BadRequestException("unsupported stream encrypt algorithm " + algorithm);
   }
 }

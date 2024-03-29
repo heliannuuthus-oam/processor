@@ -1,8 +1,8 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa;
 
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 
-public class RSAParameters extends AsymmetricParameters {
+public class RSAParameters extends SignParameters {
   protected RSAParameters() {
     super();
   }
