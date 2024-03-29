@@ -6,10 +6,12 @@ import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParamet
 import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;
 
 import io.ghcr.heliannuuthus.devtools.crypto.Encryptor;
+import io.ghcr.heliannuuthus.devtools.crypto.algorithms.RSAEncryptionPadding;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESECBParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESGCMParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECIESParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAStreamParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4CBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4ECBParameters;
@@ -17,18 +19,17 @@ import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4GCMParameters;
 import io.ghcr.heliannuuthus.devtools.provider.AsymmetricKeyProvider;
 import io.ghcr.heliannuuthus.devtools.provider.SymmetricKeyProvider;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.AESKeyGenParameters;
+import io.ghcr.heliannuuthus.devtools.provider.parameters.ECKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.RSAKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.SM4KeyGenParameters;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.stream.Stream;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -99,17 +100,43 @@ class EncryptorTest {
     Assertions.assertArrayEquals(plaintext, ENCRYPTOR.decrypt(cipher, blockParameters));
   }
 
+  static Stream<Arguments> rsaStreamEncryption() {
+    return Stream.of(2048, 3072, 4096)
+        .flatMap(c -> Stream.of(RSAEncryptionPadding.values()).map(cc -> Arguments.of(c, cc)));
+  }
 
-
-  @Test
-  void testRSAStreamEncrypt() {
+  @ParameterizedTest
+  @MethodSource("rsaStreamEncryption")
+  void testRSAStreamEncrypt(Integer keySize, RSAEncryptionPadding padding) {
     byte[] plaintext = "plaintext".getBytes();
-    Pair<byte[], byte[]> keyPair = ASYMMETRIC_KEY_PROVIDER.generate(new RSAKeyGenParameters(2048));
+    Pair<byte[], byte[]> keyPair =
+        ASYMMETRIC_KEY_PROVIDER.generate(new RSAKeyGenParameters(keySize));
 
-    EncryptionParameters blockParameters = new RSAStreamParameters(keyPair.getLeft(), true);
-    byte[] cipher = ENCRYPTOR.encrypt(plaintext, blockParameters);
-    
-    Assertions.assertArrayEquals(plaintext, ENCRYPTOR.decrypt(cipher, new RSAStreamParameters(keyPair.getRight(), false)));
+    EncryptionParameters encryptionParameters =
+        new RSAStreamParameters(keyPair.getRight(), false).padding(padding);
+    byte[] cipher = ENCRYPTOR.encrypt(plaintext, encryptionParameters);
 
+    Assertions.assertArrayEquals(
+        plaintext,
+        ENCRYPTOR.decrypt(
+            cipher, new RSAStreamParameters(keyPair.getLeft(), true).padding(padding)));
+  }
+
+  static Stream<Arguments> eciesStreamEncrypt() {
+    return Stream.of("secp256r1", "secp384r1", "secp521r1", "secp256k1").map(Arguments::of);
+  }
+
+  @ParameterizedTest
+  @MethodSource("eciesStreamEncrypt")
+  void testECIESStreamEncrypt(String curveName) {
+    byte[] plaintext = "plaintext".getBytes();
+    Pair<byte[], byte[]> keyPair =
+        ASYMMETRIC_KEY_PROVIDER.generate(new ECKeyGenParameters(curveName));
+
+    EncryptionParameters encryptionParameters = new ECIESParameters(keyPair.getRight(), false);
+    byte[] cipher = ENCRYPTOR.encrypt(plaintext, encryptionParameters);
+
+    Assertions.assertArrayEquals(
+        plaintext, ENCRYPTOR.decrypt(cipher, new ECIESParameters(keyPair.getLeft(), true)));
   }
 }

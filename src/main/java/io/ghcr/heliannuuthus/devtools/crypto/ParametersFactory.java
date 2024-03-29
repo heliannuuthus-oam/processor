@@ -4,6 +4,7 @@ import static io.ghcr.heliannuuthus.devtools.crypto.parameters.OamParameters.*;
 
 import com.google.common.collect.Sets;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECIESParameters;
@@ -58,7 +59,7 @@ public class ParametersFactory {
     throw new BadRequestException("unsupported stream sign algorithm " + algorithm);
   }
 
-  public SignParameters createForEncrypt(String algorithm, byte[] key, boolean forEncrypt) {
+  public EncryptionParameters createForEncrypt(String algorithm, byte[] key, boolean forEncrypt) {
     if (RSA.contains(algorithm)) {
       return new RSAStreamParameters(key, !forEncrypt);
     } else if (ECC.contains(algorithm)) {
