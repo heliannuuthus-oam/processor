@@ -9,5 +9,7 @@ public interface OamParameters {
   String ECDSA_ALGORITHM = "ECDSA";
   String SM2_ALGORITHM = "SM2";
 
+  String CONNECTOR = "with";
+
   String getAlgorithm();
 }

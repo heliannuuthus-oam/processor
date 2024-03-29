@@ -3,7 +3,9 @@ package io.ghcr.heliannuuthus.devtools.crypto;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.springframework.stereotype.Component;
 
+@Component
 public class Signature {
   public byte[] sign(byte[] plaintext, AsymmetricParameters parameters) {
     try {
