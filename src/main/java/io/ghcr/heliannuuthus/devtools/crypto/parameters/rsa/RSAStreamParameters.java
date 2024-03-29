@@ -3,6 +3,8 @@ package io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.RSAEncryptionPadding;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.StreamEncryptionParameters;
+
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
 import java.security.spec.MGF1ParameterSpec;
@@ -11,7 +13,7 @@ import java.util.Optional;
 import javax.crypto.spec.OAEPParameterSpec;
 import javax.crypto.spec.PSource;
 
-public class RSAStreamParameters extends RSAParameters implements EncryptionParameters {
+public class RSAStreamParameters extends StreamEncryptionParameters {
   protected RSAStreamParameters() {
     super();
   }
@@ -20,16 +22,12 @@ public class RSAStreamParameters extends RSAParameters implements EncryptionPara
     super(key, isPrivate);
   }
 
-  public RSAStreamParameters(byte[] privateKey, byte[] publicKey) {
-    super(privateKey, publicKey);
+  @Override
+  public String getAlgorithm() {
+    return super.getAlgorithm();
   }
 
   private RSAEncryptionPadding padding = RSAEncryptionPadding.OAEP_SHA256;
-
-  @Override
-  public Key getKey() {
-    return Objects.nonNull(super.getPrivateKey()) ? super.getPrivateKey() : super.getPublicKey();
-  }
 
   public RSAStreamParameters padding(RSAEncryptionPadding padding) {
     this.padding = padding;

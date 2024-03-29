@@ -10,19 +10,25 @@ import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESECBParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESGCMParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAStreamParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4CBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4ECBParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4GCMParameters;
+import io.ghcr.heliannuuthus.devtools.provider.AsymmetricKeyProvider;
 import io.ghcr.heliannuuthus.devtools.provider.SymmetricKeyProvider;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.AESKeyGenParameters;
+import io.ghcr.heliannuuthus.devtools.provider.parameters.RSAKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.SM4KeyGenParameters;
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.tuple.Pair;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -31,10 +37,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class BlockCipherTest {
+class EncryptorTest {
 
-  private static final Encryptor blockCipher = new Encryptor();
-  private static final SymmetricKeyProvider symmetricKeyProvider = new SymmetricKeyProvider();
+  private static final Encryptor ENCRYPTOR = new Encryptor();
+  private static final SymmetricKeyProvider SYMMETRIC_KEY_PROVIDER = new SymmetricKeyProvider();
+  private static final AsymmetricKeyProvider ASYMMETRIC_KEY_PROVIDER = new AsymmetricKeyProvider();
 
   @BeforeAll
   static void init() {
@@ -51,7 +58,7 @@ class BlockCipherTest {
   @DisplayName("test AES encryption")
   void testAESEncryption(String mode, int size) throws NoSuchAlgorithmException {
     byte[] plaintext = "plaintext".getBytes();
-    byte[] key = symmetricKeyProvider.generate(new AESKeyGenParameters(128));
+    byte[] key = SYMMETRIC_KEY_PROVIDER.generate(new AESKeyGenParameters(128));
     EncryptionParameters blockParameters;
     switch (mode) {
       case ECB_MODE -> {
@@ -65,8 +72,8 @@ class BlockCipherTest {
       }
       default -> throw new UnsupportedOperationException();
     }
-    byte[] cipher = blockCipher.encrypt(plaintext, blockParameters);
-    Assertions.assertArrayEquals(plaintext, blockCipher.decrypt(cipher, blockParameters));
+    byte[] cipher = ENCRYPTOR.encrypt(plaintext, blockParameters);
+    Assertions.assertArrayEquals(plaintext, ENCRYPTOR.decrypt(cipher, blockParameters));
   }
 
   @ParameterizedTest
@@ -74,7 +81,7 @@ class BlockCipherTest {
   @DisplayName("test SM4 encryption")
   void testSM4Encryption(String mode) {
     byte[] plaintext = "plaintext".getBytes();
-    byte[] key = symmetricKeyProvider.generate(new SM4KeyGenParameters());
+    byte[] key = SYMMETRIC_KEY_PROVIDER.generate(new SM4KeyGenParameters());
     EncryptionParameters blockParameters;
     switch (mode) {
       case ECB_MODE -> {
@@ -88,7 +95,21 @@ class BlockCipherTest {
       }
       default -> throw new UnsupportedOperationException();
     }
-    byte[] cipher = blockCipher.encrypt(plaintext, blockParameters);
-    Assertions.assertArrayEquals(plaintext, blockCipher.decrypt(cipher, blockParameters));
+    byte[] cipher = ENCRYPTOR.encrypt(plaintext, blockParameters);
+    Assertions.assertArrayEquals(plaintext, ENCRYPTOR.decrypt(cipher, blockParameters));
+  }
+
+
+
+  @Test
+  void testRSAStreamEncrypt() {
+    byte[] plaintext = "plaintext".getBytes();
+    Pair<byte[], byte[]> keyPair = ASYMMETRIC_KEY_PROVIDER.generate(new RSAKeyGenParameters(2048));
+
+    EncryptionParameters blockParameters = new RSAStreamParameters(keyPair.getLeft(), true);
+    byte[] cipher = ENCRYPTOR.encrypt(plaintext, blockParameters);
+    
+    Assertions.assertArrayEquals(plaintext, ENCRYPTOR.decrypt(cipher, new RSAStreamParameters(keyPair.getRight(), false)));
+
   }
 }
