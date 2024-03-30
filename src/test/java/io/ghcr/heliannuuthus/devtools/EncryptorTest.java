@@ -123,7 +123,8 @@ class EncryptorTest {
   }
 
   static Stream<Arguments> eciesStreamEncrypt() {
-    return Stream.of("secp256r1", "secp384r1", "secp521r1", "secp256k1").map(Arguments::of);
+    return Stream.of("secp256r1", "secp384r1", "secp521r1", "secp256k1", "curve25519")
+        .map(Arguments::of);
   }
 
   @ParameterizedTest
