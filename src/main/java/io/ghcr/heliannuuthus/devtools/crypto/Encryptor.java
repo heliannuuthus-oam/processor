@@ -3,15 +3,15 @@ package io.ghcr.heliannuuthus.devtools.crypto;
 import static io.ghcr.heliannuuthus.devtools.exception.CryptoException.DECRYPT_MODE;
 import static io.ghcr.heliannuuthus.devtools.exception.CryptoException.ENCRYPT_MODE;
 
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
 import javax.crypto.Cipher;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BlockCipher {
-  public byte[] encrypt(byte[] plaintext, BlockParameters parameters) {
+public class Encryptor {
+  public byte[] encrypt(byte[] plaintext, EncryptionParameters parameters) {
     try {
       Cipher cipher =
           Cipher.getInstance(parameters.getAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);
@@ -22,7 +22,7 @@ public class BlockCipher {
     }
   }
 
-  public byte[] decrypt(byte[] cypher, BlockParameters parameters) {
+  public byte[] decrypt(byte[] cypher, EncryptionParameters parameters) {
     try {
       Cipher cipher =
           Cipher.getInstance(parameters.getAlgorithm(), BouncyCastleProvider.PROVIDER_NAME);

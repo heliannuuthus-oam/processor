@@ -1,9 +1,9 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4;
 
-import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding.PKCS7;
+import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding.PKCS7;
 import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;
 
-import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
+import io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding;
 import java.security.spec.AlgorithmParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import lombok.Getter;
@@ -19,11 +19,11 @@ public class SM4CBCParameters extends SM4ECBParameters {
     this(key, nextBytes(16), PKCS7);
   }
 
-  public SM4CBCParameters(byte[] key, Padding padding) {
+  public SM4CBCParameters(byte[] key, AESEncryptionPadding padding) {
     this(key, nextBytes(16), padding);
   }
 
-  protected SM4CBCParameters(byte[] key, byte[] iv, Padding padding) {
+  protected SM4CBCParameters(byte[] key, byte[] iv, AESEncryptionPadding padding) {
     super(key, padding);
     this.iv = iv;
   }

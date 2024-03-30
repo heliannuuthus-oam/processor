@@ -1,24 +1,24 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4;
 
-import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding.PKCS7;
+import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding.PKCS7;
 
-import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockEncryptionParameters;
 import lombok.Getter;
 
 @Getter
-public class SM4ECBParameters extends BlockParameters {
+public class SM4ECBParameters extends BlockEncryptionParameters {
 
   public SM4ECBParameters(byte[] key) {
     this(key, PKCS7);
   }
 
-  protected SM4ECBParameters(byte[] key, Padding padding) {
+  protected SM4ECBParameters(byte[] key, AESEncryptionPadding padding) {
     this.key = key;
     this.padding = padding;
   }
 
-  private final Padding padding;
+  private final AESEncryptionPadding padding;
 
   @Override
   public String getName() {
@@ -30,7 +30,7 @@ public class SM4ECBParameters extends BlockParameters {
   }
 
   @Override
-  public Padding getPadding() {
-    return this.padding;
+  public String getPadding() {
+    return this.padding.getValue();
   }
 }

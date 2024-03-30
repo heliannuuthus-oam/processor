@@ -1,8 +1,8 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters.sm2;
 
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 
-public class SM2Parameters extends AsymmetricParameters {
+public class SM2Parameters extends SignParameters {
   protected SM2Parameters() {
     super();
   }

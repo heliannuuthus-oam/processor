@@ -2,7 +2,7 @@ package io.ghcr.heliannuuthus.devtools;
 
 import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest.*;
 
-import io.ghcr.heliannuuthus.devtools.crypto.Signature;
+import io.ghcr.heliannuuthus.devtools.crypto.Signer;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed25519Parameters;
@@ -32,7 +32,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class SignatureTest {
-  private final Signature signature = new Signature();
+  private final Signer signature = new Signer();
   private final AsymmetricKeyProvider provider = new AsymmetricKeyProvider();
 
   @BeforeAll

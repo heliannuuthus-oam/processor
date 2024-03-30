@@ -1,13 +1,13 @@
 package io.ghcr.heliannuuthus.devtools.crypto;
 
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 import io.ghcr.heliannuuthus.devtools.exception.CryptoException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.stereotype.Component;
 
 @Component
-public class Signature {
-  public byte[] sign(byte[] plaintext, AsymmetricParameters parameters) {
+public class Signer {
+  public byte[] sign(byte[] plaintext, SignParameters parameters) {
     try {
       java.security.Signature signer =
           java.security.Signature.getInstance(
@@ -20,7 +20,7 @@ public class Signature {
     }
   }
 
-  public boolean verify(byte[] plaintext, byte[] signature, AsymmetricParameters parameters) {
+  public boolean verify(byte[] plaintext, byte[] signature, SignParameters parameters) {
     try {
       java.security.Signature signer =
           java.security.Signature.getInstance(

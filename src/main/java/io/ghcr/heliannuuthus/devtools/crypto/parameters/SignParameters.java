@@ -11,13 +11,13 @@ import lombok.Getter;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 @Getter
-public abstract class AsymmetricParameters implements OamParameters {
+public abstract class SignParameters implements OamParameters {
 
   private MessageDigest messageDigest = MessageDigest.SHA_256;
 
-  protected AsymmetricParameters() {}
+  protected SignParameters() {}
 
-  public AsymmetricParameters(byte[] key, boolean isPrivate) {
+  public SignParameters(byte[] key, boolean isPrivate) {
     this();
     try {
       KeyFactory keyFactory =
@@ -32,7 +32,7 @@ public abstract class AsymmetricParameters implements OamParameters {
     }
   }
 
-  public AsymmetricParameters(byte[] privateKey, byte[] publicKey) {
+  public SignParameters(byte[] privateKey, byte[] publicKey) {
     try {
       KeyFactory keyFactory =
           KeyFactory.getInstance(this.getName(), BouncyCastleProvider.PROVIDER_NAME);
@@ -49,10 +49,10 @@ public abstract class AsymmetricParameters implements OamParameters {
   public abstract String getName();
 
   public String getMessageDigest() {
-    return messageDigest.getName();
+    return messageDigest.getValue();
   }
 
-  public AsymmetricParameters md(MessageDigest messageDigest) {
+  public SignParameters md(MessageDigest messageDigest) {
     this.messageDigest = messageDigest;
     return this;
   }

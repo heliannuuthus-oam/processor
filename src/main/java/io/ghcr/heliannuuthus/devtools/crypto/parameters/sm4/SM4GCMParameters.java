@@ -2,7 +2,7 @@ package io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4;
 
 import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;
 
-import io.ghcr.heliannuuthus.devtools.crypto.algorithms.Padding;
+import io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding;
 import java.security.spec.AlgorithmParameterSpec;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,7 +23,7 @@ public class SM4GCMParameters extends SM4CBCParameters {
   }
 
   public SM4GCMParameters(byte[] key, byte[] iv, byte[] aad) {
-    super(key, iv, Padding.None);
+    super(key, iv, AESEncryptionPadding.None);
     this.aad = aad;
   }
 

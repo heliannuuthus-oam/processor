@@ -3,9 +3,9 @@ package io.ghcr.heliannuuthus.devtools.controller;
 import static io.ghcr.heliannuuthus.devtools.crypto.parameters.OamParameters.*;
 
 import io.ghcr.heliannuuthus.devtools.crypto.ParametersFactory;
-import io.ghcr.heliannuuthus.devtools.crypto.Signature;
+import io.ghcr.heliannuuthus.devtools.crypto.Signer;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 import io.ghcr.heliannuuthus.devtools.model.dto.SignatureRequest;
 import io.ghcr.heliannuuthus.devtools.model.dto.VerificationRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,12 +23,12 @@ import reactor.core.publisher.Mono;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/crypto")
-@Tag(name = "signature api")
+@Tag(name = "sign/verify api")
 public class SignatureController {
 
-  private final Signature signature;
+  private final Signer signature;
 
-  @GetMapping("/algorithms")
+  @GetMapping("/signature")
   @Operation(summary = "fetch signature algorithm")
   public Flux<String> algorithms() {
     return Flux.fromStream(
@@ -38,7 +38,7 @@ public class SignatureController {
                 .flatMap(
                     alg ->
                         Stream.of(MessageDigest.values())
-                            .map(md -> md.getName() + CONNECTOR + alg))));
+                            .map(md -> md.getValue() + CONNECTOR + alg))));
   }
 
   @PostMapping("/sign")
@@ -46,9 +46,9 @@ public class SignatureController {
   public Mono<String> sign(@Valid @RequestBody SignatureRequest request) {
     return Mono.fromCallable(
         () -> {
-          AsymmetricParameters parameters =
+          SignParameters parameters =
               ParametersFactory.getInstance()
-                  .create(
+                  .createForSign(
                       request.getAlgorithm(),
                       request.getKeyFormat().decode(request.getKey()),
                       true);
@@ -64,9 +64,9 @@ public class SignatureController {
   public Mono<Boolean> verify(@Valid @RequestBody VerificationRequest request) {
     return Mono.fromCallable(
         () -> {
-          AsymmetricParameters parameters =
+          SignParameters parameters =
               ParametersFactory.getInstance()
-                  .create(
+                  .createForSign(
                       request.getAlgorithm(),
                       request.getKeyFormat().decode(request.getKey()),
                       false);

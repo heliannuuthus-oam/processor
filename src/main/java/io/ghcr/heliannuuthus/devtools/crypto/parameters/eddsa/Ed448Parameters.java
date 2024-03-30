@@ -1,10 +1,10 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa;
 
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.AsymmetricParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 import java.security.spec.AlgorithmParameterSpec;
 import org.bouncycastle.jcajce.spec.EdDSAParameterSpec;
 
-public class Ed448Parameters extends AsymmetricParameters {
+public class Ed448Parameters extends SignParameters {
 
   protected Ed448Parameters() {
     super();
