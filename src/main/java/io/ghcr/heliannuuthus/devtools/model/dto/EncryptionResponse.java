@@ -5,6 +5,6 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(fluent = true)
-public class SignatureResponse {
-  private String signature;
+public class EncryptionResponse {
+  private String cipher;
 }

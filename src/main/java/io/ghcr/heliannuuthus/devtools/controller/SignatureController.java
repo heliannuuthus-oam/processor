@@ -7,6 +7,7 @@ import io.ghcr.heliannuuthus.devtools.crypto.Signer;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
 import io.ghcr.heliannuuthus.devtools.model.dto.SignatureRequest;
+import io.ghcr.heliannuuthus.devtools.model.dto.SignatureResponse;
 import io.ghcr.heliannuuthus.devtools.model.dto.VerificationRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -43,7 +44,7 @@ public class SignatureController {
 
   @PostMapping("/sign")
   @Operation(summary = "sign api")
-  public Mono<String> sign(@Valid @RequestBody SignatureRequest request) {
+  public Mono<SignatureResponse> sign(@Valid @RequestBody SignatureRequest request) {
     return Mono.fromCallable(
         () -> {
           SignParameters parameters =
@@ -55,7 +56,7 @@ public class SignatureController {
           byte[] signature =
               this.signature.sign(
                   request.getPlaintextFormat().decode(request.getPlaintext()), parameters);
-          return request.getSignatureFormat().encode(signature);
+          return new SignatureResponse().signature(request.getSignatureFormat().encode(signature));
         });
   }
 

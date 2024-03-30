@@ -6,13 +6,12 @@ import lombok.Data;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
 @Data
-@Schema(name = "signature request dto")
-public class SignatureRequest {
+public class EncryptionRequest {
   @NotBlank
-  @Schema(description = "signature key")
+  @Schema(description = "encryption key")
   private String key;
 
-  @Schema(description = "signature key format", defaultValue = "base64")
+  @Schema(description = "encryption key format", defaultValue = "base64")
   private CodecFormat keyFormat = CodecFormat.BASE64;
 
   @NotBlank
@@ -22,8 +21,10 @@ public class SignatureRequest {
   @Schema(description = "plaintext format", defaultValue = "plaintext")
   private CodecFormat plaintextFormat = CodecFormat.PLAINTEXT;
 
-  @Schema(description = "signature format", defaultValue = "base64")
-  private CodecFormat signatureFormat = CodecFormat.BASE64;
+  @Schema(description = "cipher format", defaultValue = "base64")
+  private CodecFormat cipherFormat = CodecFormat.BASE64;
 
-  private String algorithm;
+  @NotBlank private String algorithm;
+
+  private String padding;
 }
