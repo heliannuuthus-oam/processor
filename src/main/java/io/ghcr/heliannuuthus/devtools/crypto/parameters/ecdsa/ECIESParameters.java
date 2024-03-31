@@ -37,9 +37,4 @@ public class ECIESParameters extends StreamEncryptionParameters {
   public String getAlgorithm() {
     return ECIES_ALGORITHM;
   }
-
-  @Override
-  public String getPadding() {
-    return null;
-  }
 }

@@ -49,7 +49,7 @@ public class SignatureController {
         () -> {
           SignParameters parameters =
               ParametersFactory.getInstance()
-                  .createForSign(
+                  .buildForSign(
                       request.getAlgorithm(),
                       request.getKeyFormat().decode(request.getKey()),
                       true);
@@ -67,7 +67,7 @@ public class SignatureController {
         () -> {
           SignParameters parameters =
               ParametersFactory.getInstance()
-                  .createForSign(
+                  .buildForSign(
                       request.getAlgorithm(),
                       request.getKeyFormat().decode(request.getKey()),
                       false);

@@ -6,7 +6,7 @@ import lombok.Data;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
 @Data
-public class EncryptionRequest {
+public class StreamEncryptionRequest {
   @NotBlank
   @Schema(description = "encryption key")
   private String key;
@@ -25,6 +25,4 @@ public class EncryptionRequest {
   private CodecFormat cipherFormat = CodecFormat.BASE64;
 
   @NotBlank private String algorithm;
-
-  private String padding;
 }

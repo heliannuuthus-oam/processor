@@ -23,7 +23,7 @@ public enum KeySpec {
   EC_P256K("EC-P256K", ASYMMETRIC, 256),
   ED_25519(Ed25519, ASYMMETRIC, 256),
   ED_448(Ed448, ASYMMETRIC, 57);
-  private String value;
-  private String type;
-  private int size;
+  private final String value;
+  private final String type;
+  private final int size;
 }

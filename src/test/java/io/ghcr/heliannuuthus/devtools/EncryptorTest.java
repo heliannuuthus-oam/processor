@@ -1,18 +1,14 @@
 package io.ghcr.heliannuuthus.devtools;
 
-import static io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters.ECB_MODE;
-import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters.CBC_MODE;
-import static io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters.GCM_MODE;
+import static io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters.*;
 import static io.ghcr.heliannuuthus.devtools.utils.CryptoUtils.nextBytes;
 
 import io.ghcr.heliannuuthus.devtools.crypto.Encryptor;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.RSAEncryptionPadding;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESCBCParameters;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESECBParameters;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESGCMParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECIESParameters;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAStreamParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAEncrpytionParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4CBCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4ECBParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4.SM4GCMParameters;
@@ -22,7 +18,6 @@ import io.ghcr.heliannuuthus.devtools.provider.parameters.AESKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.ECKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.RSAKeyGenParameters;
 import io.ghcr.heliannuuthus.devtools.provider.parameters.SM4KeyGenParameters;
-import java.security.NoSuchAlgorithmException;
 import java.security.Security;
 import java.util.stream.Stream;
 import org.apache.commons.lang3.tuple.Pair;
@@ -57,22 +52,10 @@ class EncryptorTest {
   @ParameterizedTest
   @MethodSource("aesGenerator")
   @DisplayName("test AES encryption")
-  void testAESEncryption(String mode, int size) throws NoSuchAlgorithmException {
+  void testAESEncryption(String mode, int size) {
     byte[] plaintext = "plaintext".getBytes();
-    byte[] key = SYMMETRIC_KEY_PROVIDER.generate(new AESKeyGenParameters(128));
-    EncryptionParameters blockParameters;
-    switch (mode) {
-      case ECB_MODE -> {
-        blockParameters = new AESECBParameters(key);
-      }
-      case CBC_MODE -> {
-        blockParameters = new AESCBCParameters(key);
-      }
-      case GCM_MODE -> {
-        blockParameters = new AESGCMParameters(key, nextBytes(12), nextBytes(128));
-      }
-      default -> throw new UnsupportedOperationException();
-    }
+    byte[] key = SYMMETRIC_KEY_PROVIDER.generate(new AESKeyGenParameters(size));
+    EncryptionParameters blockParameters = new AESParameters(mode, key);
     byte[] cipher = ENCRYPTOR.encrypt(plaintext, blockParameters);
     Assertions.assertArrayEquals(plaintext, ENCRYPTOR.decrypt(cipher, blockParameters));
   }
@@ -113,13 +96,13 @@ class EncryptorTest {
         ASYMMETRIC_KEY_PROVIDER.generate(new RSAKeyGenParameters(keySize));
 
     EncryptionParameters encryptionParameters =
-        new RSAStreamParameters(keyPair.getRight(), false).padding(padding);
+        new RSAEncrpytionParameters(keyPair.getRight(), false).padding(padding);
     byte[] cipher = ENCRYPTOR.encrypt(plaintext, encryptionParameters);
 
     Assertions.assertArrayEquals(
         plaintext,
         ENCRYPTOR.decrypt(
-            cipher, new RSAStreamParameters(keyPair.getLeft(), true).padding(padding)));
+            cipher, new RSAEncrpytionParameters(keyPair.getLeft(), true).padding(padding)));
   }
 
   static Stream<Arguments> eciesStreamEncrypt() {
