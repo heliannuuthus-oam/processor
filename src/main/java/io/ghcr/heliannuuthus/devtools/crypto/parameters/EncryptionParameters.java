@@ -1,7 +1,5 @@
 package io.ghcr.heliannuuthus.devtools.crypto.parameters;
 
-import com.google.common.base.Joiner;
-import io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding;
 import java.security.Key;
 import java.security.spec.AlgorithmParameterSpec;
 
@@ -14,19 +12,12 @@ public interface EncryptionParameters extends OamParameters {
 
   Key getKey();
 
-  @Override
-  default String getAlgorithm() {
-    return Joiner.on("/").skipNulls().join(getName(), getMode(), getPadding());
-  }
-
-  default String getName() {
-    return null;
-  }
+  String getAlgorithm();
 
   String getMode();
 
-  default String getPadding() {
-    return AESEncryptionPadding.PKCS7.getValue();
+  default String getName() {
+    return null;
   }
 
   default AlgorithmParameterSpec getSpec() {

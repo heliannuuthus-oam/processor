@@ -1,17 +1,18 @@
 package io.ghcr.heliannuuthus.devtools.crypto;
 
-import static io.ghcr.heliannuuthus.devtools.crypto.parameters.OamParameters.*;
+import static io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters.*;
 
 import com.google.common.collect.Sets;
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.MessageDigest;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.EncryptionParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.SignParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.aes.AESParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECCParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.ecdsa.ECIESParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed25519Parameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.eddsa.Ed448Parameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAEncrpytionParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAParameters;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.rsa.RSAStreamParameters;
 import io.ghcr.heliannuuthus.devtools.crypto.parameters.sm2.SM2Parameters;
 import io.ghcr.heliannuuthus.devtools.exception.BadRequestException;
 import java.util.Set;
@@ -37,33 +38,44 @@ public class ParametersFactory {
           .map(md -> md + CONNECTOR + SM2_ALGORITHM)
           .collect(Collectors.toSet());
 
+  private static final Set<String> AES =
+      Stream.of(CBC_MODE, ECB_MODE, GCM_MODE)
+          .map(mode -> AES_ALGORITHM + "-" + mode)
+          .collect(Collectors.toSet());
+
   public static ParametersFactory getInstance() {
     return INSTANCE;
   }
 
-  public SignParameters createForSign(String algorithm, byte[] key, boolean forSign) {
+  public SignParameters buildForSign(String algorithm, byte[] key, boolean forSign) {
     if (RSA.contains(algorithm)) {
       return new RSAParameters(key, forSign);
     } else if (ECC.contains(algorithm)) {
       return new ECCParameters(key, forSign);
     } else if (ED.contains(algorithm)) {
-      switch (algorithm) {
+      return switch (algorithm) {
         case EdDSAParameterSpec.Ed448 -> new Ed448Parameters(key, forSign);
         case EdDSAParameterSpec.Ed25519 -> new Ed25519Parameters(key, forSign);
         default -> throw new BadRequestException("unsupported ed algorithm " + algorithm);
-      }
-
+      };
     } else if (GM.contains(algorithm)) {
       return new SM2Parameters(key, forSign);
     }
     throw new BadRequestException("unsupported stream sign algorithm " + algorithm);
   }
 
-  public EncryptionParameters createForEncrypt(String algorithm, byte[] key, boolean forEncrypt) {
+  public EncryptionParameters buildForEncrypt(String algorithm, byte[] key, boolean forEncrypt) {
+    return buildForEncrypt(null, algorithm, key, forEncrypt);
+  }
+
+  public EncryptionParameters buildForEncrypt(
+      String mode, String algorithm, byte[] key, boolean forEncrypt) {
     if (RSA.contains(algorithm)) {
-      return new RSAStreamParameters(key, !forEncrypt);
+      return new RSAEncrpytionParameters(key, !forEncrypt);
     } else if (ECC.contains(algorithm)) {
       return new ECIESParameters(key, !forEncrypt);
+    } else if (AES.contains(algorithm)) {
+      return new AESParameters(mode, key);
     }
     throw new BadRequestException("unsupported stream encrypt algorithm " + algorithm);
   }

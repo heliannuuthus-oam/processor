@@ -3,11 +3,11 @@ package io.ghcr.heliannuuthus.devtools.crypto.parameters.sm4;
 import static io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding.PKCS7;
 
 import io.ghcr.heliannuuthus.devtools.crypto.algorithms.AESEncryptionPadding;
-import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlockEncryptionParameters;
+import io.ghcr.heliannuuthus.devtools.crypto.parameters.BlobEncryptionParameters;
 import lombok.Getter;
 
 @Getter
-public class SM4ECBParameters extends BlockEncryptionParameters {
+public class SM4ECBParameters extends BlobEncryptionParameters {
 
   public SM4ECBParameters(byte[] key) {
     this(key, PKCS7);
